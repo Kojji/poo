@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package model;
 
 /**
  *
@@ -42,7 +42,7 @@ public class SpecialItems {
         return this.range;
     }
     public String getItem() {
-        return "nome: " + this.name + " - Dano: " + this.dmgCoef + " - Distancia: " + this.range;
+        return "nome: " + this.name + " - Dano: " + this.dmgCoef + " - Distancia: " + this.range + " - Duração: " + this.duration;
     }
 
 }

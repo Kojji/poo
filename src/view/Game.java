@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
+package view;
 
-import Model.*;
+import model.*;
 
 /**
  *
@@ -17,18 +17,18 @@ public class Game {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Arma arma = new Arma();
-        arma.leArquivo();
-        Bomba bomba = new Bomba();
-        bomba.leArquivo();
+        Weapon arma = new Weapon();
+        arma.readFile();
+        Bomb bomba = new Bomb();
+        bomba.readFile();
         Virus virus = new Virus();
-        virus.leArquivo();
+        virus.readFile();
         System.out.println("\nArmas\n====================");
-        arma.imprimeListaArmas();
+        arma.weaponListPrint();
         System.out.println("\nBombas\n====================");
-        bomba.imprimeListaBombas();
+        bomba.bombListPrint();
         System.out.println("\nVirus\n====================");
-        virus.imprimeListaVirus();
+        virus.virusListPrint();
         
     }
     
