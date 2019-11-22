@@ -6,6 +6,7 @@
 package view;
 
 import model.*;
+import java.util.Arrays;
 
 /**
  *
@@ -30,6 +31,16 @@ public class Game {
         System.out.println("\nVirus\n====================");
         virus.virusListPrint();
         
+        Arena tabuleiro = new Arena(2,10,10);
+        Arena initialPosition = tabuleiro; // criar uma função para gerar coordenada inicial randomica
+        tabuleiro.initialize();
+        Robot R1 = new Robot(arma.getWeaponList().get(0), initialPosition, 300, "Robo Teste 1",300);
+        System.out.println(R1.getName() + " - criado");
+        Robot R2 = new Robot(arma.getWeaponList().get(0), initialPosition, 300, "Robo Teste 2",300);
+        System.out.println(R2.getName() + " - criado");
+  
+        System.out.println(Arrays.deepToString(tabuleiro.getArena()));
+
     }
     
 }
