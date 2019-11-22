@@ -40,7 +40,13 @@ public class Game {
         System.out.println(R2.getName() + " - criado");
   
         System.out.println(Arrays.deepToString(tabuleiro.getArena()));
-
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                Board board = new Board();
+                board.setVisible(true);
+            }
+        });
     }
     
 }

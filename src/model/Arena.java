@@ -24,14 +24,16 @@ public class Arena {
     
     public boolean initialize() {
         this.arena = new int[this.getWidth()][this.getLength()];
-        for(int i = 0; i < this.getWidth(); i++) {
+        /* for(int i = 0; i < this.getWidth(); i++) {
             for(int j = 0; j < this.getLength(); j++) {
                 this.setArenaIndex(i, j, 1);
             }
-        }
+        }*/
         return true;
     }
 
+    
+    
     public void setArenaIndex(int width, int length, int value) {
         this.arena[width][length] = value;
     }
@@ -62,5 +64,13 @@ public class Arena {
 
     public void setLength(int length) {
         this.length = length;
-    }    
+    }
+    
+    public int[] getArenaSize() {
+        int[] arr = {};
+        arr[0] = this.getHeight();
+        arr[1] = this.getWidth();
+        arr[2] = this.getLength();
+        return arr;
+    }
 }
