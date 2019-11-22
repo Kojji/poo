@@ -12,18 +12,18 @@ package model;
 public class Robot {
     private String name;
     private SpecialItems weapon;
-    private Arena position;
+    private Arena position = new Arena(0,0,0);
     private int life;
     private int armor;
+    private int speed;
 
-    public Robot(SpecialItems weapon, Arena position, int life, String name, int armor) {
+    public Robot(String name, SpecialItems weapon, int life, int armor, int speed) {
         this.name = name;
         this.weapon = weapon;
-        this.position = position;
         this.life = life;
         this.armor = armor;
+        this.speed = speed;
     }
-
 
 	public String getName() { return this.name; }
     public void setName(String name) { this.name = name; }
@@ -40,6 +40,13 @@ public class Robot {
     public int getArmor() { return this.armor; }
     public void setArmor(int armor) { this.armor = armor; }
 
+    public int getSpeed() { return this.speed; }
+    public void setSpeed(int speed) { this.speed = speed; }
+
+    public String getRobot() {
+        return "nome: " + this.getName() + " - arma: " + this.weapon.getname() + " - vida: " + this.getLife() + " - Armadura: " + this.getArmor() + " - Velocidade: " + this.getSpeed();
+    }
+
 
     public int increaseLife(int value) {
         this.setLife(this.getLife()+value);
@@ -50,5 +57,6 @@ public class Robot {
         return this.getLife();
     }
     
+    //mover() -> this.speed
     
 }

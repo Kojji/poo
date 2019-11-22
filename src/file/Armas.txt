@@ -1,9 +1,9 @@
-ESPADA
+Espada
 75
 1
-PISTOLA
+Pistola
 45
 2
-LASER
+Laser
 15
 4

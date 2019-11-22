@@ -24,6 +24,16 @@ public class Weapon {
     public ArrayList<SpecialItems> getWeaponList() {
         return this.weaponList;
     }
+
+    public SpecialItems findWeapon(String name) {
+        for(int i = 0; i < this.getWeaponList().size(); i++) {
+            if(name.equals(this.weaponList.get(i).getname())) {
+                return this.weaponList.get(i);
+            }
+        }
+        return null;
+    }
+
     public void weaponListPrint() {
         for(int i = 0; i < this.getWeaponList().size(); i++) {
             System.out.println(this.weaponList.get(i).getItem());
