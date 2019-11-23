@@ -2,6 +2,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - Board",
+      "request": "launch",
+      "mainClass": "view.Board",
+      "projectName": "RobotFight_87749bfe"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - Game",
       "request": "launch",
       "mainClass": "view.Game"

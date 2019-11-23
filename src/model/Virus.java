@@ -22,9 +22,14 @@ public class Virus {
         this.virusList = new ArrayList<>();
     }
     
+    public int getVirusListSize() {
+        return this.virusList.size();
+    }
+
     public ArrayList<SpecialItems> getVirusList() {
         return this.virusList;
     }
+
     public void virusListPrint() {
         for(int i = 0; i < this.getVirusList().size(); i++) {
             System.out.println(this.virusList.get(i).getItem());

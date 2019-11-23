@@ -17,6 +17,8 @@ public class Game {
     /**
      * @param args the command line arguments
      */
+
+    
     public static void main(String[] args) {
         Weapon arma = new Weapon();
         arma.readFile();
@@ -26,6 +28,7 @@ public class Game {
         virus.readFile();
         RobotTypes robotList = new RobotTypes();
         robotList.readFile();
+        
         System.out.println("\nArmas\n====================");
         arma.weaponListPrint();
         System.out.println("\nBombas\n====================");
@@ -36,24 +39,31 @@ public class Game {
         robotList.RobotListPrint();
         
         Arena tabuleiro = new Arena(2,10,10);
-        // criar uma função para gerar coordenada inicial randomica
         tabuleiro.initialize();
         Robot R1 = robotList.findRobot(2);
         System.out.println(R1.getName() + " - criado");
         Robot R2 = robotList.findRobot(0);
         System.out.println(R2.getName() + " - criado");
+        Robot [] players = {R1,R2};
+        tabuleiro.initializeComponentsArena(players, arma, bomba, virus);
+        // criar uma função para gerar coordenada inicial randomica
   
         
         
-
-        System.out.println(Arrays.deepToString(tabuleiro.getArena()));
+        for (int x = 0; x < tabuleiro.getLength(); x++) {
+            System.out.printf("|");
+            for (int y = 0; y < tabuleiro.getWidth(); y++) {
+                System.out.printf(" %2d",tabuleiro.getArenaIndex(x, y));
+            } 
+            System.out.println(" |");
+        }
         
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /* java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Board board = new Board();
                 board.setVisible(true);
             }
-        });
+        }); */
     }
     
 }

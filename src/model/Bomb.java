@@ -20,9 +20,12 @@ public class Bomb {
     public Bomb() {
         this.bombList = new ArrayList<>();
     }
-    
+
     public ArrayList<SpecialItems> getBombList() {
         return this.bombList;
+    }
+    public int getBombListSize() {
+        return this.bombList.size();
     }
     public void bombListPrint() {
         for(int i = 0; i < this.getBombList().size(); i++) {

@@ -25,6 +25,10 @@ public class Weapon {
         return this.weaponList;
     }
 
+    public int getWeaponListSize() {
+        return this.weaponList.size();
+    }
+
     public SpecialItems findWeapon(String name) {
         for(int i = 0; i < this.getWeaponList().size(); i++) {
             if(name.equals(this.weaponList.get(i).getname())) {
