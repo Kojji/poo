@@ -53,13 +53,25 @@ public class Action {
     this.sessionArena.initialize();
     this.sessionArena.initializeComponentsArena(players, this.weaponList, this.bombList, this.virusList);
     
-    // turnos(numPlayers)
+    int turno = 1;
     printSessionArena();
+    while(true) {
+
+      // condição de break;
+      
+      if(turno == numPlayers) {
+        turno = 1;
+      } else {
+        turno++;
+      }
+      break;
+    }
     //while para controlar o jogo
       
       //ação mover
         //mover de 1 em 1 até objetivo
       //ação atacar
+      //print catalogo de objetos na arena
       //print arena
       //troca turno
     
@@ -76,15 +88,6 @@ public class Action {
     if(!getBombList().readFile()) { System.out.println("arquivo Bomba.txt não foi lido corretamente"); }
     if(!getVirusList().readFile()) { System.out.println("arquivo Virus.txt não foi lido corretamente"); }
     if(!getRobotList().readFile()) { System.out.println("arquivo Robots.txt não foi lido corretamente"); }
-    /* 
-    System.out.println("\nArmas\n====================");
-    this.weaponList.weaponListPrint();
-    System.out.println("\nBombas\n====================");
-    this.bombList.bombListPrint();
-    System.out.println("\nVirus\n====================");
-    this.virusList.virusListPrint();
-    System.out.println("\nRobots\n====================");
-    this.robotList.RobotListPrint(); */
   }
 
   public void createRobots(int [] arrayTypes) {
