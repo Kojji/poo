@@ -30,7 +30,7 @@ public class RobotTypes {
     }
     public void RobotListPrint() {
         for(int i = 0; i < this.getRobotList().size(); i++) {
-            System.out.println(this.robotList.get(i).getRobot());
+            System.out.println("indice: " + (i + 1) + " - " + this.robotList.get(i).getRobot());
         }
     }
 
