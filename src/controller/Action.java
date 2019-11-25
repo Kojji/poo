@@ -55,11 +55,13 @@ public class Action {
     int turno = 1;
     boolean stopCondition = false;
     printSessionArena();
-    while(true) {
+    while(true) { // execução do jogo
+
+
       int maxMov = players[turno-1].movementCalc(sessionArena.getWidth(), sessionArena.getLength());
       int userMov;
       int counterExceedMovs = 0;
-      while(true) {
+      while(true) { 
         System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
         userMov = userInputs.nextInt();
         if(userMov > maxMov) { 
@@ -72,15 +74,15 @@ public class Action {
         }
         else { break; }
       }
+
+
       counterExceedMovs = 0;
       String direction;
-      userInputs.nextLine(); // consume next \n from last nextInt
+      userInputs.nextLine(); // consome \n do nextInt() utilizado anteriormente
       while(true) {
         System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
         direction = userInputs.nextLine();
-        System.out.println(direction);
-        if(direction == "C" || direction == "B" || direction == "E" || direction == "D") {
-          // pegando errado
+        if(direction.equals("C") || direction.equals("B") || direction.equals("E") || direction.equals("D")) {
           break;
         } else {
           if(counterExceedMovs >= 3) {
@@ -91,17 +93,26 @@ public class Action {
           counterExceedMovs++;
         }
       }
-      //players[turno-1].movement();
-      //ação mover
-        //mover de 1 em 1 até objetivo
+
+      players[turno-1].movement(userMov, direction);
+      for(int steps = 0; steps < userMov; steps++) {
+        //compara posição em que vai mover de 1 a 1
+        // se achar algo onde ira mover
+          //aplica dano se houver
+          //pergunta para trocar arma se quiser
+          //mover outro robo que esteja na posição
+      }
+        
+
+
       //ação atacar
       //print catalogo de objetos na arena
       //print arena
+      
       //troca turno
-
       if(turno == numPlayers) {
         turno = 1;
-        stopCondition = true;
+        stopCondition = true; // retirar esta stopCOndition posteriormente
       } else {
         turno++;
       }
