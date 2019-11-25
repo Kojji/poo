@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 import model.*;
@@ -43,9 +44,9 @@ public class Action {
     getRobotList().RobotListPrint();
     for(int i = 0; i < numPlayers; i++) {
       System.out.printf("\nEntre com o indice do robo para o jogador " + (i+1) + ": ");
-      playersRobotIndex[i] = (userInputs.nextInt()-1);
+      playersRobotIndex[i] = (userInputs.nextInt()-1); // exception por teclar não int
     }
-    
+    System.out.println(Arrays.toString(playersRobotIndex));
     createRobots(playersRobotIndex);
     
     this.sessionArena = new Arena(2,10,10);
@@ -77,12 +78,21 @@ public class Action {
 
 
       counterExceedMovs = 0;
-      String direction;
+      int directionInInt = 0;
       userInputs.nextLine(); // consome \n do nextInt() utilizado anteriormente
       while(true) {
         System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
-        direction = userInputs.nextLine();
+        String direction = userInputs.nextLine();
         if(direction.equals("C") || direction.equals("B") || direction.equals("E") || direction.equals("D")) {
+          if(direction.equals("C")) {
+            directionInInt = 0;
+          } else if(direction.equals("B")) {
+            directionInInt = 1;
+          } else if(direction.equals("E")) {
+            directionInInt = 2;
+          } else if(direction.equals("D")){
+            directionInInt = 3;
+          }
           break;
         } else {
           if(counterExceedMovs >= 3) {
@@ -94,8 +104,41 @@ public class Action {
         }
       }
 
-      players[turno-1].movement(userMov, direction);
       for(int steps = 0; steps < userMov; steps++) {
+        int movementX = 0;
+        int movementY = 0;
+        int beforeX = players[turno-1].getPosition().getWidth();
+        int beforeY = players[turno-1].getPosition().getLength();
+
+        switch(directionInInt) {
+          case 0:
+            movementY = players[turno-1].getPosition().getLength();
+            movementX = players[turno-1].getPosition().getWidth() - 1;
+            break;
+          case 1:
+            movementY = players[turno-1].getPosition().getLength();
+            movementX = players[turno-1].getPosition().getWidth() + 1;
+            break;
+          case 2:
+            movementY = players[turno-1].getPosition().getLength() - 1;
+            movementX = players[turno-1].getPosition().getWidth();
+            break;
+          case 3:
+            movementY = players[turno-1].getPosition().getLength() + 1;
+            movementX = players[turno-1].getPosition().getWidth();
+            break;
+        }
+
+        // fazer a verificação se jogador vai pra fora da area
+        
+        if(sessionArena.getArenaIndex(movementX, movementY) != 0) {
+          // aplica lógica de encontro de item
+        }
+
+        players[turno-1].setPosition(new Arena(0,movementX,movementY));
+        sessionArena.setArenaIndex(movementX, movementY, turno);
+        sessionArena.setArenaIndex(beforeX, beforeY, 0);
+        printSessionArena();
         //compara posição em que vai mover de 1 a 1
         // se achar algo onde ira mover
           //aplica dano se houver
@@ -138,7 +181,8 @@ public class Action {
   public void createRobots(int [] arrayTypes) {
     Robot [] arrayPlayers = new Robot[arrayTypes.length];
     for( int element = 0; element < arrayTypes.length; element++) {
-      arrayPlayers[element] = getRobotList().findRobot(arrayTypes[element]);
+      Robot found = getRobotList().findRobot(arrayTypes[element]);
+      arrayPlayers[element] = new Robot(found.getName(), found.getWeapon(), found.getLife(), found.getArmor(), found.getSpeed());
       System.out.printf(arrayPlayers[element].getName() + " - criado\n");
     }
     setPlayers(arrayPlayers);

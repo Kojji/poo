@@ -67,10 +67,6 @@ public class Robot {
         int maxMov = getSpeed()*arenaHeight*arenaWidth/1000;
         return 1 + randomNum.nextInt(maxMov);
     }
-
-    public void movement(int distance, String direction) {
-        // set nova posição
-    }
     
     
 }
