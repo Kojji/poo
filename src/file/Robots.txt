@@ -2,14 +2,14 @@ Robot1
 Espada
 400
 25
-7
+50
 Robot2
 Pistola
 300
 30
-8
+40
 Robot3
 Laser
 200
 35
-9
+40

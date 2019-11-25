@@ -45,7 +45,6 @@ public class Action {
       System.out.printf("\nEntre com o indice do robo para o jogador " + (i+1) + ": ");
       playersRobotIndex[i] = (userInputs.nextInt()-1);
     }
-    userInputs.close();
     
     createRobots(playersRobotIndex);
     
@@ -54,26 +53,61 @@ public class Action {
     this.sessionArena.initializeComponentsArena(players, this.weaponList, this.bombList, this.virusList);
     
     int turno = 1;
+    boolean stopCondition = false;
     printSessionArena();
     while(true) {
-
-      // condição de break;
-      
-      if(turno == numPlayers) {
-        turno = 1;
-      } else {
-        turno++;
+      int maxMov = players[turno-1].movementCalc(sessionArena.getWidth(), sessionArena.getLength());
+      int userMov;
+      int counterExceedMovs = 0;
+      while(true) {
+        System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
+        userMov = userInputs.nextInt();
+        if(userMov > maxMov) { 
+          if(counterExceedMovs >= 3) {
+            //throw excession, da dano ao jogador e encerra sua vez
+          }
+          System.out.printf("\nO valor precisa ser menor ou igual a %d", maxMov);
+          //imprime contador indicando as penalidades
+          counterExceedMovs++;
+        }
+        else { break; }
       }
-      break;
-    }
-    //while para controlar o jogo
-      
+      counterExceedMovs = 0;
+      String direction;
+      userInputs.nextLine(); // consume next \n from last nextInt
+      while(true) {
+        System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
+        direction = userInputs.nextLine();
+        System.out.println(direction);
+        if(direction == "C" || direction == "B" || direction == "E" || direction == "D") {
+          // pegando errado
+          break;
+        } else {
+          if(counterExceedMovs >= 3) {
+            //throw excession, da dano ao jogador e encerra sua vez
+          }
+          System.out.printf("\nDireção informada não é valida");
+          //imprime contador indicando as penalidades
+          counterExceedMovs++;
+        }
+      }
+      //players[turno-1].movement();
       //ação mover
         //mover de 1 em 1 até objetivo
       //ação atacar
       //print catalogo de objetos na arena
       //print arena
       //troca turno
+
+      if(turno == numPlayers) {
+        turno = 1;
+        stopCondition = true;
+      } else {
+        turno++;
+      }
+      if(stopCondition) { break; }
+    }
+    userInputs.close();
     
     /* java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
@@ -100,10 +134,10 @@ public class Action {
   }
 
   public void printSessionArena() {
-    for (int x = 0; x < this.getSessionArena().getLength(); x++) {
+    for (int x = 0; x < getSessionArena().getLength(); x++) {
       System.out.printf("|");
-      for (int y = 0; y < this.getSessionArena().getWidth(); y++) {
-          System.out.printf(" %2d",this.getSessionArena().getArenaIndex(x, y));
+      for (int y = 0; y < getSessionArena().getWidth(); y++) {
+          System.out.printf(" %2d",getSessionArena().getArenaIndex(x, y));
       } 
       System.out.println(" |");
     }

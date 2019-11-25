@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.Random;
+
 /**
  *
  * @author Fernando Koji
@@ -56,7 +58,15 @@ public class Robot {
         this.setLife(this.getLife()-value);
         return this.getLife();
     }
+
+    /*
+        gera um valor aleatório, como se fosse um dado a partir das dimenções do tabuleiro e da velocidade do robo 
+     */
+    public int movementCalc(int arenaWidth, int arenaHeight) {
+        Random randomNum = new Random();
+        int maxMov = getSpeed()*arenaHeight*arenaWidth/1000;
+        return 1 + randomNum.nextInt(maxMov);
+    }
     
-    //mover() -> this.speed
     
 }
