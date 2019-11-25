@@ -5,8 +5,10 @@
  */
 package controller;
 
+import java.security.KeyException;
 import java.util.Arrays;
 import java.util.Scanner;
+
 
 import model.*;
 
@@ -60,50 +62,62 @@ public class Action {
 
 
       int maxMov = players[turno-1].movementCalc(sessionArena.getWidth(), sessionArena.getLength());
-      int userMov;
+      int userMov = 0;
       int counterExceedMovs = 0;
-      while(true) { 
-        System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
-        userMov = userInputs.nextInt();
-        if(userMov > maxMov) { 
-          if(counterExceedMovs >= 3) {
-            //throw excession, da dano ao jogador e encerra sua vez
+      try {
+        while(true) { 
+          System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
+          userMov = userInputs.nextInt(); //InputMismatchException
+          if(userMov > maxMov) { 
+            if(counterExceedMovs >= 3) {
+              throw new KeyException("3 tentativas");
+              //throw excession, da dano ao jogador e encerra sua vez
+            }
+            System.out.printf("\nO valor precisa ser menor ou igual a %d", maxMov);
+            System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+            counterExceedMovs++;
           }
-          System.out.printf("\nO valor precisa ser menor ou igual a %d", maxMov);
-          //imprime contador indicando as penalidades
-          counterExceedMovs++;
+          else { break; }
         }
-        else { break; }
+      } catch(KeyException e) {
+        //implica dano e encerra turno
+        e.printStackTrace();
       }
 
 
       counterExceedMovs = 0;
       int directionInInt = 0;
       userInputs.nextLine(); // consome \n do nextInt() utilizado anteriormente
-      while(true) {
-        System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
-        String direction = userInputs.nextLine();
-        if(direction.equals("C") || direction.equals("B") || direction.equals("E") || direction.equals("D")) {
-          if(direction.equals("C")) {
-            directionInInt = 0;
-          } else if(direction.equals("B")) {
-            directionInInt = 1;
-          } else if(direction.equals("E")) {
-            directionInInt = 2;
-          } else if(direction.equals("D")){
-            directionInInt = 3;
+      try{
+        while(true) {
+          System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
+          String direction = userInputs.nextLine();
+          if(direction.equals("C") || direction.equals("B") || direction.equals("E") || direction.equals("D")) {
+            if(direction.equals("C")) {
+              directionInInt = 0;
+            } else if(direction.equals("B")) {
+              directionInInt = 1;
+            } else if(direction.equals("E")) {
+              directionInInt = 2;
+            } else if(direction.equals("D")){
+              directionInInt = 3;
+            }
+            break;
+          } else {
+            if(counterExceedMovs >= 3) {
+              throw new KeyException("3 tentativas");
+              //throw excession, da dano ao jogador e encerra sua vez
+            }
+            System.out.printf("\nDireção informada não é valida");
+            System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+            counterExceedMovs++;
           }
-          break;
-        } else {
-          if(counterExceedMovs >= 3) {
-            //throw excession, da dano ao jogador e encerra sua vez
-          }
-          System.out.printf("\nDireção informada não é valida");
-          //imprime contador indicando as penalidades
-          counterExceedMovs++;
         }
+      } catch(KeyException e) {
+        //implica dano e encerra turno
+        e.printStackTrace();
       }
-
+      
       for(int steps = 0; steps < userMov; steps++) {
         int movementX = 0;
         int movementY = 0;
