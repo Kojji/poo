@@ -20,7 +20,7 @@ public class Robot {
     private int speed;
     private int virusDuration = 0;
     private int virusDmg = 0;
-    private int wpOnHold = 0;
+    private int wpOnHold = -1;
     private boolean dropWp = false;
 
     public Robot(String name, SpecialItems weapon, int life, int armor, int speed) {
@@ -50,7 +50,7 @@ public class Robot {
     public void setSpeed(int speed) { this.speed = speed; }
 
     public int getVirusDuration() { return this.virusDuration; }
-    public void setVirusDuration(int newDuration) { this.virusDuration = newDuration;}
+    public void setVirusDuration(int newDuration) { this.virusDuration = newDuration; }
 
     public int getVirusDmg() { return this.virusDmg; }
     public void setVirusDmg(int newDmg) { this.virusDmg = newDmg; }
@@ -73,6 +73,25 @@ public class Robot {
         System.out.println(getVirusDmg() + " de Dano recebido devido a virus, duração: " + getVirusDuration() + " turnos");
     }
 
+    public int[] moveOnEncounter(Arena arena) {
+        Random randomNum = new Random();
+        int [] toReturn = new int [2];
+        boolean stopCondition = true;
+        while(stopCondition) {
+            int width = randomNum.nextInt(arena.getWidth());
+            int length = randomNum.nextInt(arena.getHeight());
+
+            if(arena.getArenaIndex(width, length) == 0) {
+                toReturn[0] = width;
+                toReturn[1] = length;
+                stopCondition = false;
+            }
+        }
+        /* setPosition(new Arena(0, toReturn[0], toReturn[1]));
+        System.out.println(getPosition().getWidth()  +" - " + getPosition().getHeight() ); */
+        return toReturn;
+
+    }
 
     public int increaseLife(int value) {
         this.setLife(this.getLife()+value);

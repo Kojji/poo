@@ -154,9 +154,13 @@ public class Action {
         
         if(sessionArena.getArenaIndex(movementX, movementY) != 0) {
           if(sessionArena.getArenaIndex(movementX, movementY)/10 == 0) {
-
-            System.out.println("encontrou jogador");
-            // encontrou jogador
+            int oponent = sessionArena.getArenaIndex(movementX, movementY);
+            int [] newPositionOpenent = players[oponent - 1].moveOnEncounter(sessionArena);
+            players[oponent - 1].setPosition(new Arena(0, newPositionOpenent[0], newPositionOpenent[1]));
+            sessionArena.setArenaIndex(newPositionOpenent[0], newPositionOpenent[1], oponent);
+            System.out.println("Jogador "+ turno + " passou por cima do jogador " + oponent + ".");
+            System.out.println("Jogador " + oponent + "foi movido para outras coordenadas.");
+            
           } else if(sessionArena.getArenaIndex(movementX, movementY)/10 == 1) {
             SpecialItems weapon = getWeaponList().getWeaponList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
             System.out.println("Jogador " + turno + " encontrou a arma: " + weapon.getname() + " com dano - " + weapon.getdmgCoef() + " e alcance - " + weapon.getRange());
@@ -190,12 +194,12 @@ public class Action {
 
         players[turno-1].setPosition(new Arena(0,movementX,movementY));
         sessionArena.setArenaIndex(movementX, movementY, turno);
-        if(players[turno - 1].getWpOnHold() != 0 && players[turno - 1].getDropWp()) {
+        if(players[turno - 1].getWpOnHold() != -1 && players[turno - 1].getDropWp()) {
           sessionArena.setArenaIndex(beforeX, beforeY, 10 + players[turno - 1].getWpOnHold());
           players[turno - 1].setDropWp(false);
-          players[turno - 1].setWpOnHold(0);
+          players[turno - 1].setWpOnHold(-1);
 
-        } else if(players[turno - 1].getWpOnHold() != 0 && !players[turno - 1].getDropWp()){
+        } else if(players[turno - 1].getWpOnHold() != -1 && !players[turno - 1].getDropWp()){
           sessionArena.setArenaIndex(beforeX, beforeY, 0);
           players[turno - 1].setDropWp(true);
         } else {
