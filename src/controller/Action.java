@@ -8,6 +8,7 @@ package controller;
 import java.security.KeyException;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Random;
 
 
 import model.*;
@@ -108,6 +109,7 @@ public class Action {
             try {
               userMov = userInputs.nextInt(); //InputMismatchException
             }catch(java.util.InputMismatchException e) {
+              userInputs.nextLine();
               System.out.printf("\nO valor precisa ser menor ou igual a %d e numérico", maxMov);
               System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
               counterExceedMovs++;
@@ -290,6 +292,77 @@ public class Action {
           }
         }
       }
+
+      if(!pulaBloco) {
+        printSessionArena();
+        boolean stopInputCond = true;
+        while(stopInputCond) {
+          System.out.println("Jogador "+ turno + " - Deseja Atacar?Arma: " + players[turno-1].getWeapon().getname() + " - alcance: "+ players[turno-1].getWeapon().getRange() +"(S/N)");
+          String atacar = userInputs.nextLine();
+          if(atacar.equals("S")) {
+            int target = 0;
+
+            Random randomNum = new Random();
+            try {
+              while(true) { 
+                try {
+                  System.out.println("Jogador "+ turno + " - Escolha o Jogador que deseja atacar: ");
+                  target = userInputs.nextInt(); //InputMismatchException
+                }catch(java.util.InputMismatchException e) {
+                  userInputs.nextLine();
+                  System.out.printf("\nO valor precisa ser menor ou igual a %d e numérico", numPlayers);
+                  System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+                  counterExceedMovs++;
+                  continue;
+                }
+                if(target > numPlayers || target <= 0) { 
+                  if(counterExceedMovs >= 3) {
+                    throw new KeyException("3 tentativas");
+                    //throw excession, da dano ao jogador e encerra sua vez
+                  }
+                  System.out.printf("\nO valor precisa ser menor ou igual a %d e não pode ser atacar seu próprio robo", numPlayers);
+                  System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+                  counterExceedMovs++;
+                }
+                else { break; }
+              }
+
+              if(target <= numPlayers && target > 0 && target != turno) {
+                int distance = getDistance(players[turno - 1].getPosition(), players[target - 1].getPosition());
+                if(players[turno - 1].getWeapon().getRange() >= distance) {
+                  int dano = (randomNum.nextInt(players[turno - 1].getWeapon().getdmgCoef()/2)+players[turno - 1].getWeapon().getdmgCoef()/2)/distance;
+                  players[target - 1].decreaseLife(dano);
+                  System.out.println(dano + " de dano do ataque!");
+                  System.out.println("Jogador " + target + " - Vida Restante: " + players[target - 1].getLife());
+                  if(players[target - 1].getLife() <= 0) {
+                    System.out.println("Jogador " + target + " Morreu!" );
+                    sessionArena.setArenaIndex(players[target - 1].getPosition().getWidth(), players[target - 1].getPosition().getLength(), 0);
+                    playersAlive--;
+                  }
+                } else {
+                  System.out.println("Jogador " + target + " está distante em " + distance + ", enquanto o alcance de sua arma é " + players[turno - 1].getWeapon().getRange() + "!");
+                }
+              }
+            } catch(KeyException e) {
+              System.out.println("Jogador " + turno + " não digitou um valor valido em " + e.getMessage() + ", dano será aplicado!");
+              pulaBloco = true;
+              players[turno - 1].decreaseLife(80);
+              System.out.println("Vida Restante: " + players[turno - 1].getLife());
+              if(players[turno - 1].getLife() <= 0) {
+                System.out.println("Jogador " + turno + " Morreu!" );
+                sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+                playersAlive--;
+              }
+            }
+            
+            stopInputCond = false;
+          } else if(atacar.equals("N")) {
+            stopInputCond = false;
+          }
+        }
+        
+      }
+
         
 
 
@@ -300,7 +373,7 @@ public class Action {
       if(playersAlive == 1) {
         for(int i = 0; i < players.length ; i++) {
           if(players[i].getLife() > 0) {
-            System.out.println("Jogador " + (i+1) + " Venceu esta Partida!");
+            System.out.println("\n\nJogador " + (i+1) + " Venceu esta Partida!");
           }
         }
         stopCondition = true; // retirar esta stopCOndition posteriormente
@@ -348,5 +421,13 @@ public class Action {
       } 
       System.out.println(" |");
     }
+  }
+
+  public int getDistance(Arena position1, Arena position2) {
+    int lengthDff = position1.getLength() - position2.getLength();
+    int widthDff = position1.getWidth() - position2.getWidth();
+    if(lengthDff < 0) { lengthDff = lengthDff*-1; }
+    if(widthDff < 0) { widthDff = widthDff*-1; }
+    return lengthDff + widthDff;
   }
 }

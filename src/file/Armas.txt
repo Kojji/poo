@@ -2,8 +2,8 @@ Espada
 75
 1
 Pistola
-45
+60
 2
 Laser
-15
+50
 4
