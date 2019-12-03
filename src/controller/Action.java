@@ -24,9 +24,9 @@ public class Action {
   private RobotTypes robotList = new RobotTypes();
   private Arena sessionArena;
   private Robot [] players;
+  private Logging actionLog = new Logging();
 
   public Action() {
-
   }
 
   public Weapon getWeaponList() { return this.weaponList; }
@@ -35,6 +35,7 @@ public class Action {
   public RobotTypes getRobotList() { return this.robotList; }
   public Arena getSessionArena() { return this.sessionArena; }
   public Robot [] getPlayers() { return this.players; }
+  public Logging getActionLog() { return this.actionLog; }
   public void setPlayers(Robot [] players) { this.players = players; }
   
   public void runGame() {
@@ -73,7 +74,14 @@ public class Action {
     boolean stopCondition = false;
     int playersAlive = numPlayers;
 
+
     while(true) { // execução do jogo
+
+      int atckTarget = 0;
+      int[] positionIni = new int[2];
+      int[] positionFim = new int[2];
+      int atckDmg = 0;
+      int dmgRcv = 0;
 
       if(players[turno - 1].getLife() <= 0) {
         if(turno == numPlayers) {
@@ -84,14 +92,21 @@ public class Action {
         continue;
       }
 
+      positionIni[0] = players[turno - 1].getPosition().getWidth();
+      positionIni[1] = players[turno - 1].getPosition().getLength();
+
       boolean pulaBloco = false;
       System.out.println("\nTurno Jogador " + turno);
+      imprimeCatalogoArena();
       printSessionArena();
       if(players[turno - 1].getVirusDuration() > 0) {
         players[turno - 1].virusDmgApply();
         if(players[turno - 1].getLife() <= 0) {
           System.out.println("Jogador " + turno + " Morreu!" );
           sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+          positionFim[0] = positionIni[0];
+          positionFim[1] = positionIni[1];
+          dmgRcv = players[turno - 1].getVirusDmg();
           playersAlive--;
           pulaBloco = true;
         }
@@ -130,6 +145,9 @@ public class Action {
           pulaBloco = true;
           players[turno - 1].decreaseLife(80);
           System.out.println("Vida Restante: " + players[turno - 1].getLife());
+          positionFim[0] = positionIni[0];
+          positionFim[1] = positionIni[1];
+          dmgRcv += 80;
           if(players[turno - 1].getLife() <= 0) {
             System.out.println("Jogador " + turno + " Morreu!" );
             sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
@@ -173,6 +191,9 @@ public class Action {
           players[turno - 1].decreaseLife(80);
           System.out.println("Vida Restante: " + players[turno - 1].getLife());
           pulaBloco = true;
+          positionFim[0] = positionIni[0];
+          positionFim[1] = positionIni[1];
+          dmgRcv += 80;
           if(players[turno - 1].getLife() <= 0) {
             System.out.println("Jogador " + turno + " Morreu!" );
             sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
@@ -218,6 +239,9 @@ public class Action {
           }catch(UnsupportedOperationException e) {
             System.out.println("Jogador " + turno + " tentou um " + e.getMessage() + ", dano será aplicado!");
             players[turno - 1].decreaseLife(80);
+            positionFim[0] = beforeX;
+            positionFim[1] = beforeY;
+            dmgRcv += 80;
             System.out.println("Vida Restante: " + players[turno - 1].getLife());
             movimenta = false;
             if(players[turno - 1].getLife() <= 0) {
@@ -225,11 +249,13 @@ public class Action {
               sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
               playersAlive--;
               pulaBloco = true;
+              steps = userMov;
             }
           }
           
           
           if(movimenta) {
+            
             if(sessionArena.getArenaIndex(movementX, movementY) != 0) {
               if(sessionArena.getArenaIndex(movementX, movementY)/10 == 0) {
                 int oponent = sessionArena.getArenaIndex(movementX, movementY);
@@ -260,6 +286,7 @@ public class Action {
                 SpecialItems bomb = getBombList().getBombList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
                 System.out.println("Bomba Estourada!! " + bomb.getdmgCoef() + " de dano ao Jogador " + turno);
                 int result = players[turno-1].decreaseLife(bomb.getdmgCoef());
+                dmgRcv += bomb.getdmgCoef();
                 System.out.println("Vida Restante: " + result);
                 if(players[turno - 1].getLife() <= 0) {
                   System.out.println("Jogador " + turno + " Morreu!" );
@@ -276,6 +303,8 @@ public class Action {
             }
 
             players[turno-1].setPosition(new Arena(0,movementX,movementY));
+            positionFim[0] = movementX;
+            positionFim[1] = movementY;
             sessionArena.setArenaIndex(movementX, movementY, turno);
             if(players[turno - 1].getWpOnHold() != -1 && players[turno - 1].getDropWp()) {
               sessionArena.setArenaIndex(beforeX, beforeY, 10 + players[turno - 1].getWpOnHold());
@@ -329,8 +358,10 @@ public class Action {
               if(target <= numPlayers && target > 0 && target != turno) {
                 int distance = getDistance(players[turno - 1].getPosition(), players[target - 1].getPosition());
                 if(players[turno - 1].getWeapon().getRange() >= distance) {
+                  atckTarget = target;
                   int dano = (randomNum.nextInt(players[turno - 1].getWeapon().getdmgCoef()/2)+players[turno - 1].getWeapon().getdmgCoef()/2)/distance;
                   players[target - 1].decreaseLife(dano);
+                  atckDmg = dano;
                   System.out.println(dano + " de dano do ataque!");
                   System.out.println("Jogador " + target + " - Vida Restante: " + players[target - 1].getLife());
                   if(players[target - 1].getLife() <= 0) {
@@ -346,6 +377,7 @@ public class Action {
               System.out.println("Jogador " + turno + " não digitou um valor valido em " + e.getMessage() + ", dano será aplicado!");
               pulaBloco = true;
               players[turno - 1].decreaseLife(80);
+              dmgRcv += 80;
               System.out.println("Vida Restante: " + players[turno - 1].getLife());
               if(players[turno - 1].getLife() <= 0) {
                 System.out.println("Jogador " + turno + " Morreu!" );
@@ -361,22 +393,19 @@ public class Action {
         }
         
       }
-
-        
-
-
-      //ação atacar
-      //print catalogo de objetos na arena
       
-      //troca turno
+      getActionLog().addLine(new LogStructure(turno, positionIni, positionFim, dmgRcv, atckTarget, atckDmg));;
+
       if(playersAlive == 1) {
         for(int i = 0; i < players.length ; i++) {
           if(players[i].getLife() > 0) {
             System.out.println("\n\nJogador " + (i+1) + " Venceu esta Partida!");
           }
         }
-        stopCondition = true; // retirar esta stopCOndition posteriormente
+        stopCondition = true;
       }
+
+
       if(turno == numPlayers) {
         turno = 1;
       } else {
@@ -385,14 +414,21 @@ public class Action {
       
       if(stopCondition) { break; }
     }
+
+    boolean stopInputCond = true;
+    while(stopInputCond) { 
+      System.out.println("deseja imprimir log da partida? (" + players[turno - 1].getWeapon().getname() + ")? (S/N)");
+      String logPrint = userInputs.nextLine();
+      if(logPrint.equals("S")) {
+        getActionLog().printLog();
+        stopInputCond = false;
+      } else if(logPrint.equals("N")) {
+        stopInputCond = false;
+      }
+    }
+
     userInputs.close();
     
-    /* java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            Board board = new Board();
-            board.setVisible(true);
-        }
-    }); */
   }
 
   public void fileReading() {
