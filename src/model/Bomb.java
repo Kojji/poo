@@ -29,7 +29,7 @@ public class Bomb {
     }
     public void bombListPrint() {
         for(int i = 0; i < this.getBombList().size(); i++) {
-            System.out.println(this.bombList.get(i).getItem());
+            System.out.println((i+20) + " - " + this.bombList.get(i).getItem());
         }
     }
 

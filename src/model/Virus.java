@@ -32,7 +32,7 @@ public class Virus {
 
     public void virusListPrint() {
         for(int i = 0; i < this.getVirusList().size(); i++) {
-            System.out.println(this.virusList.get(i).getItem());
+            System.out.println((i+30) + " - " + this.virusList.get(i).getItem());
         }
     }
 

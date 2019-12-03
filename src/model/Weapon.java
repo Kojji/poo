@@ -49,7 +49,7 @@ public class Weapon {
 
     public void weaponListPrint() {
         for(int i = 0; i < this.getWeaponList().size(); i++) {
-            System.out.println(this.weaponList.get(i).getItem());
+            System.out.println((i+10) + " - " + this.weaponList.get(i).getItem());
         }
     }
 

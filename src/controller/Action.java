@@ -6,7 +6,6 @@
 package controller;
 
 import java.security.KeyException;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -63,12 +62,12 @@ public class Action {
         i--;
       }
     }
-    System.out.println(Arrays.toString(playersRobotIndex));
     createRobots(playersRobotIndex);
     
     this.sessionArena = new Arena(2,10,10);
     this.sessionArena.initialize();
     this.sessionArena.initializeComponentsArena(players, this.weaponList, this.bombList, this.virusList);
+    imprimeCatalogoArena();
     
     int turno = 1;
     boolean stopCondition = false;
@@ -325,7 +324,7 @@ public class Action {
                   counterExceedMovs++;
                 }
                 else { break; }
-              }
+              } 
 
               if(target <= numPlayers && target > 0 && target != turno) {
                 int distance = getDistance(players[turno - 1].getPosition(), players[target - 1].getPosition());
@@ -429,5 +428,16 @@ public class Action {
     if(lengthDff < 0) { lengthDff = lengthDff*-1; }
     if(widthDff < 0) { widthDff = widthDff*-1; }
     return lengthDff + widthDff;
+  }
+
+  public void imprimeCatalogoArena() {
+    System.out.println("\n\nObjetos da Arena");
+    System.out.println("0 - Local Vazio!");
+    for(int i = 0; i < players.length; i++) {
+      System.out.println((i+1) + " - Jogador: " + (i+1));
+    }
+    getBombList().bombListPrint();
+    getVirusList().virusListPrint();
+    getWeaponList().weaponListPrint();
   }
 }
