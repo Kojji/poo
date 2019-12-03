@@ -38,6 +38,15 @@ public class Weapon {
         return null;
     }
 
+    public int findWeaponIndex(String name) {
+        for(int i = 0; i < this.getWeaponList().size(); i++) {
+            if(name.equals(this.weaponList.get(i).getname())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void weaponListPrint() {
         for(int i = 0; i < this.getWeaponList().size(); i++) {
             System.out.println(this.weaponList.get(i).getItem());

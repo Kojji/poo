@@ -57,9 +57,16 @@ public class Action {
     
     int turno = 1;
     boolean stopCondition = false;
-    printSessionArena();
     while(true) { // execução do jogo
 
+      System.out.println("\nTurno Jogador " + turno);
+      printSessionArena();
+      if(players[turno - 1].getVirusDuration() > 0) {
+        players[turno - 1].virusDmgApply();
+        if(players[turno - 1].getLife() <= 0) {
+          // jogador morreu
+        }
+      }
 
       int maxMov = players[turno-1].movementCalc(sessionArena.getWidth(), sessionArena.getLength());
       int userMov = 0;
@@ -146,13 +153,55 @@ public class Action {
         // fazer a verificação se jogador vai pra fora da area
         
         if(sessionArena.getArenaIndex(movementX, movementY) != 0) {
-          // aplica lógica de encontro de item
+          if(sessionArena.getArenaIndex(movementX, movementY)/10 == 0) {
+
+            System.out.println("encontrou jogador");
+            // encontrou jogador
+          } else if(sessionArena.getArenaIndex(movementX, movementY)/10 == 1) {
+            SpecialItems weapon = getWeaponList().getWeaponList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
+            System.out.println("Jogador " + turno + " encontrou a arma: " + weapon.getname() + " com dano - " + weapon.getdmgCoef() + " e alcance - " + weapon.getRange());
+            
+            boolean stopInputCond = true;
+            while(stopInputCond) {
+              System.out.println("deseja trocar pela arma atual? (" + players[turno - 1].getWeapon().getname() + ")? (S/N)");
+              String gunSwap = userInputs.nextLine();
+              if(gunSwap.equals("S")) {
+                players[turno - 1].setWpOnHold(getWeaponList().findWeaponIndex(players[turno - 1].getWeapon().getname()));
+                players[turno - 1].setWeapon(weapon);
+                stopInputCond = false;
+              } else if(gunSwap.equals("N")) {
+                players[turno - 1].setWpOnHold(sessionArena.getArenaIndex(movementX, movementY)%10);
+                stopInputCond = false;
+              }
+            }
+          } else if(sessionArena.getArenaIndex(movementX, movementY)/10 == 2) {
+            SpecialItems bomb = getBombList().getBombList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
+            System.out.println("Bomba Estourada!! " + bomb.getdmgCoef() + " de dano ao Jogador " + turno);
+            int result = players[turno-1].decreaseLife(bomb.getdmgCoef());
+            //if vida <= 0 stop condition = true e continue numPlayer -1 se = 1 jogador restante ganhou
+            System.out.println("Vida Restante: " + result);
+          } else {
+            SpecialItems virus = getVirusList().getVirusList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
+            players[turno - 1].setVirusDmg(virus.getdmgCoef());
+            players[turno - 1].setVirusDuration(virus.getDuration());
+            System.out.println("Virus Contraido!! Por " + virus.getDuration() + " turnos, " + virus.getdmgCoef() + " de dano será aplicado!");
+          }
         }
 
         players[turno-1].setPosition(new Arena(0,movementX,movementY));
         sessionArena.setArenaIndex(movementX, movementY, turno);
-        sessionArena.setArenaIndex(beforeX, beforeY, 0);
-        printSessionArena();
+        if(players[turno - 1].getWpOnHold() != 0 && players[turno - 1].getDropWp()) {
+          sessionArena.setArenaIndex(beforeX, beforeY, 10 + players[turno - 1].getWpOnHold());
+          players[turno - 1].setDropWp(false);
+          players[turno - 1].setWpOnHold(0);
+
+        } else if(players[turno - 1].getWpOnHold() != 0 && !players[turno - 1].getDropWp()){
+          sessionArena.setArenaIndex(beforeX, beforeY, 0);
+          players[turno - 1].setDropWp(true);
+        } else {
+          sessionArena.setArenaIndex(beforeX, beforeY, 0);
+        }
+        //printSessionArena();
         //compara posição em que vai mover de 1 a 1
         // se achar algo onde ira mover
           //aplica dano se houver
@@ -167,12 +216,15 @@ public class Action {
       //print arena
       
       //troca turno
+      if(players[turno - 1].getLife() <= 0) {
+        stopCondition = true; // retirar esta stopCOndition posteriormente
+      }
       if(turno == numPlayers) {
         turno = 1;
-        stopCondition = true; // retirar esta stopCOndition posteriormente
       } else {
         turno++;
       }
+      
       if(stopCondition) { break; }
     }
     userInputs.close();

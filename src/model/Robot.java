@@ -18,6 +18,10 @@ public class Robot {
     private int life;
     private int armor;
     private int speed;
+    private int virusDuration = 0;
+    private int virusDmg = 0;
+    private int wpOnHold = 0;
+    private boolean dropWp = false;
 
     public Robot(String name, SpecialItems weapon, int life, int armor, int speed) {
         this.name = name;
@@ -45,8 +49,28 @@ public class Robot {
     public int getSpeed() { return this.speed; }
     public void setSpeed(int speed) { this.speed = speed; }
 
+    public int getVirusDuration() { return this.virusDuration; }
+    public void setVirusDuration(int newDuration) { this.virusDuration = newDuration;}
+
+    public int getVirusDmg() { return this.virusDmg; }
+    public void setVirusDmg(int newDmg) { this.virusDmg = newDmg; }
+
+    public int getWpOnHold() { return this.wpOnHold; }
+    public void setWpOnHold(int holding) { this.wpOnHold = holding; }
+
+    public boolean getDropWp() { return this.dropWp; }
+    public void setDropWp(boolean drop) { this.dropWp = drop; }
+
+
     public String getRobot() {
         return "nome: " + this.getName() + " - arma: " + this.weapon.getname() + " - vida: " + this.getLife() + " - Armadura: " + this.getArmor() + " - Velocidade: " + this.getSpeed();
+    }
+
+    public void virusDmgApply() {
+        decreaseLife(getVirusDmg());
+        setVirusDuration(getVirusDuration()-1);
+
+        System.out.println(getVirusDmg() + " de Dano recebido devido a virus, duração: " + getVirusDuration() + " turnos");
     }
 
 
