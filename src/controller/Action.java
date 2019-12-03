@@ -71,8 +71,18 @@ public class Action {
     
     int turno = 1;
     boolean stopCondition = false;
+    int playersAlive = numPlayers;
 
     while(true) { // execução do jogo
+
+      if(players[turno - 1].getLife() <= 0) {
+        if(turno == numPlayers) {
+          turno = 1;
+        } else {
+          turno++;
+        }
+        continue;
+      }
 
       boolean pulaBloco = false;
       System.out.println("\nTurno Jogador " + turno);
@@ -80,47 +90,58 @@ public class Action {
       if(players[turno - 1].getVirusDuration() > 0) {
         players[turno - 1].virusDmgApply();
         if(players[turno - 1].getLife() <= 0) {
-          // jogador morreu
+          System.out.println("Jogador " + turno + " Morreu!" );
+          sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+          playersAlive--;
+          pulaBloco = true;
         }
       }
 
       int maxMov = players[turno-1].movementCalc(sessionArena.getWidth(), sessionArena.getLength());
       int userMov = 0;
       int counterExceedMovs = 0;
-      try {
-        while(true) { 
-          System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
-          try {
-            userMov = userInputs.nextInt(); //InputMismatchException
-          }catch(java.util.InputMismatchException e) {
-            System.out.printf("\nO valor precisa ser menor ou igual a %d e numérico", maxMov);
-            System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
-            counterExceedMovs++;
-            continue;
-          }
-          if(userMov > maxMov) { 
-            if(counterExceedMovs >= 3) {
-              throw new KeyException("3 tentativas");
-              //throw excession, da dano ao jogador e encerra sua vez
+      if(!pulaBloco) {
+
+        try {
+          while(true) { 
+            System.out.printf("\nJogador %d - indique quantas casas deseja andar (até %d): ", turno, maxMov);
+            try {
+              userMov = userInputs.nextInt(); //InputMismatchException
+            }catch(java.util.InputMismatchException e) {
+              System.out.printf("\nO valor precisa ser menor ou igual a %d e numérico", maxMov);
+              System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+              counterExceedMovs++;
+              continue;
             }
-            System.out.printf("\nO valor precisa ser menor ou igual a %d", maxMov);
-            System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
-            counterExceedMovs++;
+            if(userMov > maxMov) { 
+              if(counterExceedMovs >= 3) {
+                throw new KeyException("3 tentativas");
+                //throw excession, da dano ao jogador e encerra sua vez
+              }
+              System.out.printf("\nO valor precisa ser menor ou igual a %d", maxMov);
+              System.out.printf("\nSe um valor válido não for inserido em %d tentativas, dano será aplicado a seu robô!", 3 - counterExceedMovs);
+              counterExceedMovs++;
+            }
+            else { break; }
           }
-          else { break; }
+        } catch(KeyException e) {
+          System.out.println("Jogador " + turno + " não digitou um valor valido em " + e.getMessage() + ", dano será aplicado!");
+          pulaBloco = true;
+          players[turno - 1].decreaseLife(80);
+          System.out.println("Vida Restante: " + players[turno - 1].getLife());
+          if(players[turno - 1].getLife() <= 0) {
+            System.out.println("Jogador " + turno + " Morreu!" );
+            sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+            playersAlive--;
+          }
         }
-      } catch(KeyException e) {
-        System.out.println("Jogador " + turno + " não digitou um valor valido em " + e.getMessage() + ", dano será aplicado!");
-        pulaBloco = true;
-        System.out.println("Vida Restante: " + players[turno - 1].getLife());
-        players[turno - 1].decreaseLife(80);
       }
 
 
       counterExceedMovs = 0;
       int directionInInt = 0;
-      userInputs.nextLine(); // consome \n do nextInt() utilizado anteriormente
       if(!pulaBloco) {
+        userInputs.nextLine(); // consome \n do nextInt() utilizado anteriormente
         try{
           while(true) {
             System.out.printf("\nJogador %d - Direção do movimento de %d casas(C - cima, B - baixo, E - esquerda, D - Direita): ", turno, maxMov);
@@ -151,6 +172,11 @@ public class Action {
           players[turno - 1].decreaseLife(80);
           System.out.println("Vida Restante: " + players[turno - 1].getLife());
           pulaBloco = true;
+          if(players[turno - 1].getLife() <= 0) {
+            System.out.println("Jogador " + turno + " Morreu!" );
+            sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+            playersAlive--;
+          }
         }
       }
       
@@ -182,7 +208,7 @@ public class Action {
                 movementX = players[turno-1].getPosition().getWidth();
                 break;
             }
-            if(movementX > sessionArena.getWidth() || movementX < 0) {
+            if(movementX >= sessionArena.getWidth() || movementX < 0) {
               throw new UnsupportedOperationException("movemento para fora da arena");
             } else if(movementY >= sessionArena.getLength() || movementY < 0) {
               throw new UnsupportedOperationException("movemento para fora da arena");
@@ -193,6 +219,12 @@ public class Action {
             players[turno - 1].decreaseLife(80);
             System.out.println("Vida Restante: " + players[turno - 1].getLife());
             movimenta = false;
+            if(players[turno - 1].getLife() <= 0) {
+              System.out.println("Jogador " + turno + " Morreu!" );
+              sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+              playersAlive--;
+              pulaBloco = true;
+            }
           }
           
           
@@ -227,8 +259,13 @@ public class Action {
                 SpecialItems bomb = getBombList().getBombList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
                 System.out.println("Bomba Estourada!! " + bomb.getdmgCoef() + " de dano ao Jogador " + turno);
                 int result = players[turno-1].decreaseLife(bomb.getdmgCoef());
-                //if vida <= 0 stop condition = true e continue numPlayer -1 se = 1 jogador restante ganhou
                 System.out.println("Vida Restante: " + result);
+                if(players[turno - 1].getLife() <= 0) {
+                  System.out.println("Jogador " + turno + " Morreu!" );
+                  sessionArena.setArenaIndex(players[turno - 1].getPosition().getWidth(), players[turno - 1].getPosition().getLength(), 0);
+                  playersAlive--;
+                  pulaBloco = true;
+                }
               } else {
                 SpecialItems virus = getVirusList().getVirusList().get(sessionArena.getArenaIndex(movementX, movementY)%10);
                 players[turno - 1].setVirusDmg(virus.getdmgCoef());
@@ -258,10 +295,14 @@ public class Action {
 
       //ação atacar
       //print catalogo de objetos na arena
-      //print arena
       
       //troca turno
-      if(players[turno - 1].getLife() <= 0) {
+      if(playersAlive == 1) {
+        for(int i = 0; i < players.length ; i++) {
+          if(players[i].getLife() > 0) {
+            System.out.println("Jogador " + (i+1) + " Venceu esta Partida!");
+          }
+        }
         stopCondition = true; // retirar esta stopCOndition posteriormente
       }
       if(turno == numPlayers) {
